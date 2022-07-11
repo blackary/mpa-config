@@ -1,0 +1,23 @@
+pages:
+  - page_name: Home
+    icon: 🏠
+    script_path: streamlit_app.py
+    layout: wide
+sections:
+  - name: Utilty Apps
+    icon: ⭐
+    pages:
+      - page_name: Example One
+        icon: 🤠
+        date_added: 2022-07-04
+      - page_name: Custom name!
+        icon: ⚡
+        script_path: pages/example_two.py
+  - name: More Apps
+    icon: 💻
+    pages:
+      - page_name: Example three
+        icon: 🦇
+      - page_name: Old App
+        icon: 💀
+        deprecated: true
