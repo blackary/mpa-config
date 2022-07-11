@@ -11,6 +11,7 @@ Features include:
 - Nesting related apps within a "section"
 - Adding a created date on each app, and automatically adding a 🆕 icon
 - Automatically adding the icon and title at the top of each page
+- Displaying some pages in wide-mode
 
 Note that this depends on an API that may change, and is not designed to be used this way,
 so this will probably NOT work long-term.

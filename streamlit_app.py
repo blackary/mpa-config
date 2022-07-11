@@ -1,5 +1,6 @@
 from itertools import chain
 from pathlib import Path
+from tkinter import W
 
 import streamlit as st
 
@@ -30,7 +31,6 @@ with col1:
 
 
 with col2:
-    "## python files in repository"
+    "## Streamlit app files in repository"
     paths = chain(Path(".").glob("streamlit_app.py"), Path("pages").glob("*.py"))
-    for path in paths:
-        st.code(path)
+    st.code("\n".join(str(p) for p in paths))
