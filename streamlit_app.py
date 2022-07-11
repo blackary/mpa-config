@@ -1,6 +1,5 @@
 from itertools import chain
 from pathlib import Path
-from tkinter import W
 
 import streamlit as st
 
