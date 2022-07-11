@@ -1,11 +1,9 @@
 from itertools import chain
 from pathlib import Path
-from tkinter import W
 
 import streamlit as st
-import yaml
 
-from page_config import get_config_file, standard_page_widgets
+from page_config import standard_page_widgets
 
 standard_page_widgets()
 
