@@ -2,15 +2,15 @@ pages:
   - page_name: Home
     icon: 🏠
     script_path: streamlit_app.py
-    layout: wide
+    layout: wide  # By default, layout is 'centered' for all pages
 sections:
-  - name: Utilty Apps
+  - name: Utility Apps
     icon: ⭐
     pages:
       - page_name: Example One
         icon: 🤠
-        date_added: 2022-07-04
-      - page_name: Custom name!
+        date_added: 2022-07-04  # If younger than a month, the page name will be augmented with a neat :new: emoji!
+      - page_name: Custom name!  # Explicit naming here overwrites the name inferred from script_path
         icon: ⚡
         script_path: pages/example_two.py
   - name: More Apps
@@ -20,4 +20,4 @@ sections:
         icon: 🦇
       - page_name: Old App
         icon: 💀
-        deprecated: true
+        deprecated: true  # This app will not appear in the menu!
