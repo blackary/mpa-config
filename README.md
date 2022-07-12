@@ -1,6 +1,6 @@
 # Streamlit Multi-Page Configuration
 
-[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://blackary-mpa-config-streamlit-app-0bp2ol.streamlitapp.com/)
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://mpa-config.streamlitapp.com/)
 
 <img width="600" src="https://user-images.githubusercontent.com/7164864/178483961-1f9abf49-eb44-455f-9362-37951daf055a.gif">
 
