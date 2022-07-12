@@ -10,13 +10,11 @@ Streamlit recently [released multi-page apps](https://blog.streamlit.io/introduc
 
 In this repository, we show a prototype on how to use a [page_config.yaml](https://github.com/blackary/mpa-config/blob/main/page_config.yaml) to control the ordering, icons, and nesting of the pages in the sidebar of a multi-page Streamlit app.
 
-Features include:
+Main features include:
 
 - **Decoupling page settings from filenames.** No need to use indices or emojis in filenames to handle page titles, icons or ordering! You can name your Python scripts however you want.
 - **Controling the order of the pages.** Adding pages in the config in the order you want them to appear in the app.
 - **Nesting related pages within a "section".** Using `sections` in page_config.yaml will add un-clickable placeholders that group pages together.
-- **Adding a created date on each app.** Using the `created_date` field for each page config, the app automatically adds a 🆕 flag to the page title if it is under 30 days old!
-- **Displaying some pages in wide-mode.** Using the `layout` field as `'wide'` or `'centered' (default).
 - **Automatically adding the icon and title at the top of each page.** Bringing consistency to your pages!
 
 ⚠️ This project depends on an API that may change, and is not designed to be used this way,
@@ -33,12 +31,12 @@ so this will probably NOT work long-term.
 ### Documentation
 
 Supported parameters in page_config.yaml for `pages`:
-- page_name
-- icon
-- script_path
-- layout
-- created_date
+- page_name: Page name.
+- icon: Emoji you want to use as an icon
+- created_date: App automatically adds a 🆕 flag to the page title if it is under 30 days old!
+- script_path: Path to your Streamlit script for that page. Defaults to `snake_case(page_name).py`
+- layout: Choose between 'wide' or 'centered'. Defaults to `'centered'`
 
 Supported parameters in page_config.yaml for `sections`:
-- name
-- icon
+- name: Section name
+- icon: Emoji you want to use as an icon
