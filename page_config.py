@@ -1,12 +1,14 @@
 from dataclasses import dataclass
 from datetime import date, timedelta
 from pathlib import Path
+from time import sleep
 from typing import Any, Dict, List, Optional
 
 import streamlit as st
 import yaml
 from streamlit import StreamlitAPIException, _get_script_run_ctx
 from streamlit.source_util import get_pages
+from streamlit.util import calc_md5
 
 
 @dataclass
@@ -27,6 +29,9 @@ class Config:
         if self.is_section:
             return "streamlit_app.py"
 
+        if self.standard_page_name.lower() == "streamlit_app":
+            return "streamlit_app.py"
+
         return f"pages/{self.standard_page_name.lower()}.py"
 
     @property
@@ -40,9 +45,18 @@ class Config:
             and self.date_added > date.today() - timedelta(days=30)
         )
 
+    @property
+    def page_hash(self) -> str:
+        abs_path = Path(self.get_script_path())
+        key = calc_md5(str(abs_path))
+        if self.is_section:
+            key += self.page_name
+
+        return key
+
     def as_dict(self) -> Dict[str, str]:
         return {
-            "page_script_hash": self.standard_page_name,
+            "page_script_hash": self.page_hash,
             "page_name": self.standard_page_name,
             "icon": self.icon,
             "script_path": self.get_script_path(),
@@ -125,9 +139,13 @@ def overwrite_page_config():
 
     # Populate the page list with the pages defined in page_config.yaml
     for page, config in page_config_overrides_by_name.items():
-        page_config[page] = config.as_dict()
+        page_config[config.page_hash] = config.as_dict()
 
     st.session_state["updated_config"] = True
+
+    sleep(0.1)
+
+    st.experimental_rerun()
 
 
 def add_styling():
@@ -216,8 +234,7 @@ def add_page_header():
     except StreamlitAPIException:
         pass
 
-    st.write(f"# {page_config.icon}")
-    st.title(title)
+    st.title(f"{page_config.icon} {title}")
 
 
 def standard_page_widgets():
