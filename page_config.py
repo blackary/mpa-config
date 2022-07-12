@@ -13,7 +13,7 @@ from streamlit.source_util import get_pages
 class Config:
     page_name: str
     icon: str
-    deprecated: Optional[bool] = False
+    visible: Optional[bool] = True
     date_added: Optional[date] = None
     layout: Optional[str] = "centered"
     is_section: Optional[bool] = False
@@ -65,7 +65,6 @@ def get_page_config() -> List[Config]:
     config = get_config_file()
     other_pages = config["pages"]
     sections = config["sections"]
-
     pages: List[Dict[str, Any]] = []
 
     for page in other_pages:
@@ -73,13 +72,17 @@ def get_page_config() -> List[Config]:
 
     for section in sections:
         pages.append(
-            {"page_name": section["name"], "icon": section["icon"], "is_section": True}
+            {
+                "page_name": section["name"],
+                "icon": section["icon"],
+                "is_section": True,
+            }
         )
         for page in section["pages"]:
             pages.append(page)
 
-    # Drop any pages that are deprecated
-    configs = [Config(**p) for p in pages if not p.get("deprecated", False)]
+    # Drop any pages that are set to not visible
+    configs = [Config(**p) for p in pages if p.get("visible", True)]
 
     return configs
 
@@ -206,13 +209,16 @@ def add_page_header():
 
     try:
         st.set_page_config(
-            page_title=title, page_icon=page_config.icon, layout=page_config.layout
+            page_title=title,
+            page_icon=page_config.icon,
+            layout=page_config.layout,
         )
     except StreamlitAPIException:
         pass
 
     st.write(f"# {page_config.icon}")
     st.title(title)
+
 
 def standard_page_widgets():
     overwrite_page_config()
