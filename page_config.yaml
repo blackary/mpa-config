@@ -20,4 +20,4 @@ sections:
         icon: 🦇
       - page_name: Old App
         icon: 💀
-        deprecated: true  # This app will not appear in the menu!
+        visible: false  # This app will not appear in the menu!
