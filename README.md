@@ -36,6 +36,7 @@ Supported parameters in page_config.yaml for `pages`:
 - created_date: App automatically adds a 🆕 flag to the page title if it is under 30 days old!
 - script_path: Path to your Streamlit script for that page. Defaults to `snake_case(page_name).py`
 - layout: Choose between 'wide' or 'centered'. Defaults to `'centered'`
+- deprecated: If true, the page will not be displayed in the app. Defaults to `'false'`
 
 Supported parameters in page_config.yaml for `sections`:
 - name: Section name
