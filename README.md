@@ -34,7 +34,9 @@ Then, when you get the hang of how the page_config.yaml works and you want to im
 
 1. Copy the page_config.py file into your own Streamlit app
 2. Make your own page_config.yaml file in the same directory with your apps' information
-3. Import and add standard_page_widgets() to the top of your page scripts (in /pages)
+3. Import and add standard_page_widgets() to the top of your page scripts
+
+With those changes, you should be indent, organize, and emojify your apps!
 
 ### Documentation
 
