@@ -20,18 +20,16 @@ Main features include:
 ⚠️ This project depends on an API that may change, and is not designed to be used this way,
 so this will probably NOT work long-term.
 
-
 ### Get started
 
 1. Install requirements `pip install -r requirements.txt`
 2. Run the Streamlit app `streamlit run streamlit_app.py`
 3. Play with the page_config.yaml!
 
-
 ### Documentation
 
-
 #### In your page .py scripts:
+
 All it takes for your app to support this is to add this little Python code on top of all your page scripts:
 
 ```python
@@ -43,7 +41,9 @@ standard_page_widgets()
 ```
 
 #### In the page_config.yaml
+
 Supported parameters in page_config.yaml for `pages`:
+
 - page_name: Page name.
 - icon: Emoji you want to use as an icon
 - created_date: App automatically adds a 🆕 flag to the page title if it is under 30 days old!
@@ -52,5 +52,6 @@ Supported parameters in page_config.yaml for `pages`:
 - deprecated: If true, the page will not be displayed in the app. Defaults to `'false'`
 
 Supported parameters in page_config.yaml for `sections`:
+
 - name: Section name
 - icon: Emoji you want to use as an icon
