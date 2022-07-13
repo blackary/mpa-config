@@ -5,3 +5,6 @@ from page_config import standard_page_widgets
 standard_page_widgets()
 
 st.write("This is just a sample page!")
+
+if st.button("Testing"):
+    st.experimental_set_query_params()

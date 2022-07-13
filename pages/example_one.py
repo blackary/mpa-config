@@ -1,3 +1,5 @@
+from time import sleep
+
 import streamlit as st
 from page_config import standard_page_widgets
 
@@ -5,3 +7,5 @@ from page_config import standard_page_widgets
 standard_page_widgets()
 
 st.write("This is just a sample page!")
+
+st.experimental_set_query_params()
