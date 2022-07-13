@@ -2,14 +2,14 @@ pages:
   - page_name: Home
     icon: 🏠
     script_path: streamlit_app.py
-    layout: wide  # By default, layout is 'centered' for all pages
+    layout: wide  # By default, layout is 'centered' for all pages. See all the default values in page_config.py
 sections:
   - name: Utility Apps
     icon: ⭐
     pages:
       - page_name: Example One
         icon: 🤠
-        date_added: 2022-07-04  # If younger than a month, the page name will be augmented with a neat :new: emoji!
+        date_added: 2022-07-04  # If younger than 30 days, the page name will be augmented with a neat :new: emoji!
       - page_name: Custom name!  # Explicit naming here overwrites the name inferred from script_path
         icon: ⚡
         script_path: pages/example_two.py
