@@ -22,9 +22,21 @@ so this will probably NOT work long-term.
 
 ### Get started
 
-1. Install requirements `pip install -r requirements.txt`
-2. Run the Streamlit app `streamlit run streamlit_app.py`
-3. Play with the page_config.yaml!
+The easiest way to get started with this repo is to:
+
+1. Clone the repo `git clone https://github.com/blackary/mpa-config.git`
+2. Change your working directory to the repo `cd mpa-config`
+3. Install requirements `pip install -r requirements.txt`
+4. Run the Streamlit app `streamlit run streamlit_app.py`
+5. Play around with the page_config.yaml!
+
+Then, when you get the hang of how the page_config.yaml works and you want to implement the same functionality into your own Streamlit app, you can:
+
+1. Copy the page_config.py file into your own Streamlit app
+2. Make your own page_config.yaml file in the same directory with your apps' information
+3. Import and add standard_page_widgets() to the top of your page scripts
+
+With those changes, you should be indent, organize, and emojify your apps!
 
 ### Documentation
 
