@@ -7,8 +7,9 @@ from typing import Any, Dict, List, Optional
 import streamlit as st
 import yaml
 from streamlit import StreamlitAPIException, _get_script_run_ctx
-from streamlit.source_util import get_pages
+from streamlit.source_util import _on_pages_changed, get_pages
 from streamlit.util import calc_md5
+from typing_extensions import NotRequired, TypedDict
 
 
 @dataclass
@@ -114,6 +115,57 @@ def get_current_page_config() -> Config:
             return page
 
     raise KeyError
+
+
+class Page(TypedDict):
+    name: str
+    icon: str
+    path: NotRequired[str]
+
+
+def configure_pages(pages: List[Page]):
+    """
+    Pass a list of dictionaries of the form
+    {
+        "name": "<page_name>",
+        "icon": "<icon>",
+        "path": "<script_path>" # optional, defaults to pages/<page_name>.py, or streamlit_app.py if page_name is "streamlit_app"
+    }
+    This then overrides the list of pages in the sidebar
+    """
+    # Get the page list dictionary from native streamlit (streamlit_app.py + pages/*.py)
+    page_config = get_all_pages()
+
+    page_config.clear()
+
+    for page in pages:
+        config: dict = {
+            "page_name": page["name"],
+            "icon": page["icon"],
+        }
+        if "path" not in page:
+            if page["name"].lower().replace(" ", "_") == "streamlit_app":
+                config["script_path"] = "streamlit_app.py"
+            else:
+                config["script_path"] = f"pages/{page['name'].lower().replace(' ', '_')}.py"
+        else:
+            config["script_path"] = page["path"]
+
+        page_script_hash = calc_md5(config["script_path"])
+        if page_script_hash in page_config:
+            page_script_hash = calc_md5(config["script_path"] + page["page_name"])
+            if page_script_hash in page_config:
+                raise KeyError("Cannot have two pages with the same name and script path")
+
+        config["page_script_hash"] = page_script_hash
+
+        page_config[config["page_script_hash"]] = config
+
+    _on_pages_changed.send()
+
+    #sleep(0.1)
+
+    #st.experimental_rerun()
 
 
 def overwrite_page_config():
