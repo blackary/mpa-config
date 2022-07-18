@@ -1,3 +1,5 @@
+import time
+
 import streamlit_patches as st
 
 url = "https://www.notion.so/streamlit/Johannes-MPA-v2-idea-1869aafe213b45fabb090db9cae845c1"
