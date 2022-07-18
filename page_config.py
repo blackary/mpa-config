@@ -153,11 +153,15 @@ def configure_pages(pages: List[Page]):
 
         page_script_hash = calc_md5(config["script_path"])
         if page_script_hash in page_config:
-            page_script_hash = calc_md5(config["script_path"] + page["page_name"])
+            page_script_hash = calc_md5(config["script_path"] + page["name"])
             if page_script_hash in page_config:
                 raise KeyError("Cannot have two pages with the same name and script path")
 
         config["page_script_hash"] = page_script_hash
+
+        config["real_script_path"] = config["script_path"]
+
+        config["script_path"] = "streamlit_app.py"
 
         page_config[config["page_script_hash"]] = config
 
