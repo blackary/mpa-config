@@ -6,6 +6,9 @@ url = "https://www.notion.so/streamlit/Johannes-MPA-v2-idea-1869aafe213b45fabb09
 
 st.sidebar.write("Common sidebar element")
 
+if st.sidebar.checkbox("Run long function before st.page commands"):
+    time.sleep(3)
+
 "# Common header!"
 
 "### [Give feedback here](url)"
