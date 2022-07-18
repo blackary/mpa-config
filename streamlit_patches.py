@@ -1,19 +1,26 @@
-import importlib
 import sys
-from telnetlib import OLD_ENVIRON
 from time import sleep
 from typing import Callable, Optional, Union
 
 from streamlit import *
 from streamlit import _get_script_run_ctx, source_util
 from streamlit.scriptrunner.script_runner import (
+    LOGGER,
+    SCRIPT_RUN_WITHOUT_ERRORS_KEY,
+    ForwardMsg,
+    RerunData,
+    RerunException,
     ScriptRunner,
+    ScriptRunnerEvent,
+    _clean_problem_modules,
+    _log_if_error,
     _new_module,
     config,
+    handle_uncaught_app_exception,
+    in_memory_file_manager,
     magic,
     modified_sys_path,
 )
-from streamlit.server.server import Server
 from streamlit.source_util import _on_pages_changed, get_pages
 from streamlit.util import calc_md5
 
@@ -21,8 +28,13 @@ from streamlit.util import calc_md5
 def page(
     path: Union[str, Callable], name: Optional[str] = None, icon: Optional[str] = None
 ):
-    # server = Server.get_current()
-    # main_script_path = server.main_script_path
+    """
+    Add a new page to the sidebar
+    path: The path to the page's script or a function that returns the page's script
+    name (optional): The name of the page (defaults to the page's script's or function
+    name, with underscores replaced with spaces)
+    icon (optional): The icon to be used for the page
+    """
 
     # TODO -- FIX THIS
     main_script_path = "streamlit_app.py"
@@ -39,10 +51,9 @@ def page(
     else:
         page_script_hash = calc_md5(path)
 
+    # If this page has already been added, don't try to add it again.
     if page_script_hash in page_config:
         return
-
-    # write(page_config)
 
     ctx = _get_script_run_ctx()
     if ctx is None:
@@ -73,114 +84,6 @@ def page(
     _on_pages_changed.send()
 
     sleep(0.1)
-
-
-old_on_script_finished = ScriptRunner._on_script_finished
-
-
-def on_script_finished(self, ctx):
-    write("Running script finished!")
-    write(ctx)
-
-    main_script_path = self._session_data.main_script_path
-    pages = source_util.get_pages(main_script_path)
-    # self._session_state.on_script_finished()
-    if ctx.page_script_hash:
-        current_page_info = pages[ctx.page_script_hash]
-        run_script(current_page_info["real_script_path"])
-
-    old_on_script_finished(self, ctx)
-
-
-# ScriptRunner._on_script_finished = on_script_finished
-
-old_run_script = ScriptRunner._run_script
-
-
-def new_run_script(self, rerun_data):
-    write("Running script")
-    write(rerun_data)
-
-    old_run_script(self, rerun_data)
-
-    main_script_path = self._session_data.main_script_path
-    pages = source_util.get_pages(main_script_path)
-
-    if rerun_data.page_script_hash:
-        current_page_info = pages.get(rerun_data.page_script_hash, None)
-        run_script(current_page_info["real_script_path"])
-
-
-# ScriptRunner._run_script = new_run_script  # type: ignore
-
-
-def run_script(script_path: str):
-
-    module_name = script_path.replace("/", ".").replace(".py", "")
-    is_first_import = module_name not in sys.modules
-    selected_page_module = importlib.import_module(module_name)
-    if not is_first_import:
-        importlib.reload(selected_page_module)
-
-    return
-
-    with source_util.open_python_file(script_path) as f:
-        filebody = f.read()
-
-    if config.get_option("runner.magicEnabled"):
-        filebody = magic.add_magic(filebody, script_path)
-
-    code = compile(
-        filebody,
-        # Pass in the file path so it can show up in exceptions.
-        script_path,
-        # We're compiling entire blocks of Python, so we need "exec"
-        # mode (as opposed to "eval" or "single").
-        mode="exec",
-        # Don't inherit any flags or "future" statements.
-        flags=0,
-        dont_inherit=1,
-        # Use the default optimization options.
-        optimize=-1,
-    )
-
-    # Create fake module. This gives us a name global namespace to
-    # execute the code in.
-    # TODO(vdonato): Double-check that we're okay with naming the
-    # module for every page `__main__`. I'm pretty sure this is
-    # necessary given that people will likely often write
-    #     ```
-    #     if __name__ == "__main__":
-    #         ...
-    #     ```
-    # in their scripts.
-    module = _new_module("__main__")
-
-    # Install the fake module as the __main__ module. This allows
-    # the pickle module to work inside the user's code, since it now
-    # can know the module where the pickled objects stem from.
-    # IMPORTANT: This means we can't use "if __name__ == '__main__'" in
-    # our code, as it will point to the wrong module!!!
-    sys.modules["__main__"] = module
-
-    # Add special variables to the module's globals dict.
-    # Note: The following is a requirement for the CodeHasher to
-    # work correctly. The CodeHasher is scoped to
-    # files contained in the directory of __main__.__file__, which we
-    # assume is the main script directory.
-    module.__dict__["__file__"] = script_path
-
-    with modified_sys_path(self._session_data), self._set_execing_flag():
-        # Run callbacks for widgets whose values have changed.
-        if rerun_data.widget_states is not None:
-            self._session_state.on_script_will_rerun(rerun_data.widget_states)
-
-        ctx.on_script_start()
-        exec(code, module.__dict__)
-
-
-from streamlit.scriptrunner.script_runner import *
-from streamlit.scriptrunner.script_runner import _clean_problem_modules, _log_if_error
 
 
 def _run_script(self, rerun_data: RerunData) -> None:
@@ -268,14 +171,11 @@ def _run_script(self, rerun_data: RerunData) -> None:
             msg.page_not_found.page_name = rerun_data.page_name
             ctx.enqueue(msg)
 
-        code: List[Any] = [_get_code(script_path)]
-
-        # write("ADDING!")
-        # write(extra_script_path)
+        code: List[Any] = [_get_code_from_path(script_path)]
 
         if extra_script_path is not None:
             if type(extra_script_path) == str:
-                code.append(_get_code(extra_script_path))
+                code.append(_get_code_from_path(extra_script_path))
             elif callable(extra_script_path):
                 code.append(extra_script_path)
             else:
@@ -366,7 +266,7 @@ def _run_script(self, rerun_data: RerunData) -> None:
         self._run_script(rerun_exception_data)
 
 
-def _get_code(script_path: str) -> Any:
+def _get_code_from_path(script_path: str) -> Any:
     with source_util.open_python_file(script_path) as f:
         filebody = f.read()
 

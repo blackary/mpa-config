@@ -1,14 +1,6 @@
-from itertools import chain
-from pathlib import Path
-from typing import List
-
-from streamlit import _get_script_run_ctx
-
 import streamlit_patches as st
 
 st.sidebar.write("Common sidebar element")
-
-ctx = _get_script_run_ctx()
 
 "## Common header!"
 
