@@ -13,7 +13,7 @@ if st.sidebar.checkbox("Run long function before st.page commands"):
 
 "# Common header!"
 
-f"### [Give feedback here](url)"
+f"### [Give feedback here]({url})"
 
 ## Pages
 
