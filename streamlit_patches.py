@@ -1,4 +1,5 @@
 import sys
+from pathlib import Path
 from time import sleep
 from typing import Callable, Optional, Union
 
@@ -41,10 +42,17 @@ def page(
 
     main_page_hash = calc_md5(main_script_path)
 
+    main_script_path_absolute = Path(main_script_path).absolute()
+
+    main_page_hash_absolute = calc_md5(str(main_script_path_absolute))
+
     page_config = get_pages(main_script_path)
 
     if main_page_hash in page_config:
         page_config.pop(main_page_hash)
+
+    if main_page_hash_absolute in page_config:
+        page_config.pop(main_page_hash_absolute)
 
     if callable(path):
         page_script_hash = calc_md5(path.__name__)
