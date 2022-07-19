@@ -1,3 +1,4 @@
+import platform
 import time
 
 import streamlit_patches as st
@@ -7,6 +8,9 @@ url = "https://www.notion.so/streamlit/Johannes-MPA-v2-idea-1869aafe213b45fabb09
 ## Common elements
 
 st.sidebar.write("Common sidebar element")
+
+st.sidebar.write("Streamlit version:", st.__version__)
+st.sidebar.write("Python version:", platform.python_version())
 
 if st.sidebar.checkbox("Run long function before st.page commands"):
     time.sleep(3)

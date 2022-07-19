@@ -4,7 +4,7 @@ from time import sleep
 from typing import Callable, Optional, Union
 
 from streamlit import *
-from streamlit import _get_script_run_ctx, source_util
+from streamlit import __version__, _get_script_run_ctx, source_util
 from streamlit.scriptrunner.script_runner import (
     LOGGER,
     SCRIPT_RUN_WITHOUT_ERRORS_KEY,
