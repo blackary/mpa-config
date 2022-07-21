@@ -4,7 +4,7 @@ from time import sleep
 from typing import Callable, Optional, Union
 
 from streamlit import *
-from streamlit import __version__, _get_script_run_ctx, source_util
+from streamlit import __path__, __version__, _get_script_run_ctx, source_util
 from streamlit.scriptrunner.script_runner import (
     LOGGER,
     SCRIPT_RUN_WITHOUT_ERRORS_KEY,
@@ -26,8 +26,18 @@ from streamlit.source_util import _on_pages_changed, get_pages
 from streamlit.util import calc_md5
 
 
+def get_main_script_path() -> str:
+    # TODO -- FIX THIS
+    return "streamlit_app.py"
+
+
 def page(
-    path: Union[str, Callable], name: Optional[str] = None, icon: Optional[str] = None
+    path: Union[str, Callable],
+    name: Optional[str] = None,
+    icon: Optional[str] = None,
+    is_nested: bool = False,
+    is_section: bool = False,
+    force_update: bool = True, # TODO -- UNDO!
 ):
     """
     Add a new page to the sidebar
@@ -36,9 +46,7 @@ def page(
     name, with underscores replaced with spaces)
     icon (optional): The icon to be used for the page
     """
-
-    # TODO -- FIX THIS
-    main_script_path = "streamlit_app.py"
+    main_script_path = get_main_script_path()
 
     main_page_hash = calc_md5(main_script_path)
 
@@ -56,12 +64,16 @@ def page(
 
     if callable(path):
         page_script_hash = calc_md5(path.__name__)
+    elif is_section:
+        page_script_hash = calc_md5(path + str(name))
     else:
         page_script_hash = calc_md5(path)
 
     # If this page has already been added, don't try to add it again.
-    if page_script_hash in page_config:
+    if page_script_hash in page_config and not force_update:
         return
+    else:
+        _add_css_to_html()
 
     ctx = _get_script_run_ctx()
     if ctx is None:
@@ -87,11 +99,32 @@ def page(
 
     config["page_script_hash"] = page_script_hash
 
+    config["is_nested"] = is_nested
+
+    config["is_section"] = is_section
+
     page_config[page_script_hash] = config
+
+    update_css()
 
     _on_pages_changed.send()
 
     sleep(0.1)
+
+
+class Section:
+    def page(
+        self,
+        path: Union[str, Callable],
+        name: Optional[str] = None,
+        icon: Optional[str] = None,
+    ):
+        page(path, name, icon, is_nested=True)
+
+
+def section(name: str, icon: Optional[str] = None) -> Section:
+    page("streamlit_app.py", name, icon, is_section=True)
+    return Section()
 
 
 def _run_script(self, rerun_data: RerunData) -> None:
@@ -299,3 +332,46 @@ def _get_code_from_path(script_path: str) -> Any:
 
 
 ScriptRunner._run_script = _run_script  # type: ignore
+
+
+def _add_css_to_html():
+    base_path = Path(__path__[0])
+    html_path = base_path / "static" / "index.html"
+    content = html_path.read_text()
+    if "css-patches.css" not in content:
+        before, after = content.split("</head>")
+        # Add the CSS file to the end of the <head> tag.
+        before += """<link rel="stylesheet" href="./static/css/css-patches.css">"""
+        content = before + "</head>" + after
+        html_path.write_text(content)
+
+
+def update_css():
+    base_path = Path(__path__[0])
+    new_css = base_path / "static" / "static" / "css" / "css-patches.css"
+
+    main_script_path = get_main_script_path()
+
+    page_config = get_pages(main_script_path)
+
+    styling = ""
+
+    idx = 1
+    for page in page_config.values():
+        if page.get("is_section", False):
+            styling += f"""
+                li:nth-child({idx}) a {{
+                    pointer-events: none; /* Disable clicking on section header */
+                }}
+            """
+        elif page.get("is_nested", False):
+            # Unless specifically unnested, indent all pages that aren't section headers
+            styling += f"""
+                li:nth-child({idx}) span:nth-child(1) {{
+                    margin-left: 1.5rem;
+                }}
+            """
+
+        idx += 1
+
+    new_css.write_text(styling)

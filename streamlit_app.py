@@ -35,8 +35,11 @@ st.page("example_one.py", name="Home!", icon="🍔")
 
 st.page("example_four.py", icon="🦊")
 
-st.page("example_three.py", name="Custom name!", icon="🔥")
+section = st.section("Section", icon="🧯")
 
-st.page("example_two.py", icon="⭐")
+# st.page("example_three.py", name="Custom name!", icon="🔥")
+section.page("example_three.py", name="Custom name!", icon="🔥")
 
-st.page(function_example, icon="🌊")
+section.page("example_two.py", icon="⭐")
+
+section.page(function_example, icon="🌊")
