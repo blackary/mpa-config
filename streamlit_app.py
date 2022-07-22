@@ -79,3 +79,10 @@ section.page(test3, "Test3", icon="🔥")
 section.page(test4, "Test4", icon="🔥")
 
 st.page(test5, "Test5", icon="🔥")
+
+# st.page("example_three.py", name="Custom name!", icon="🔥")
+section.page("example_three.py", name="Custom name!", icon="🔥")
+
+section.page("example_two.py", icon="⭐")
+
+section.page(function_example, icon="🌊")

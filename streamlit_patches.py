@@ -63,7 +63,6 @@ def page(
     if main_page_hash_absolute in page_config:
         page_config.pop(main_page_hash_absolute)
 
-
     if callable(path):
         to_hash = path.__name__
     else:
@@ -145,6 +144,8 @@ def page(
 
     update_css()
 
+    update_css()
+
     _on_pages_changed.send()
 
     sleep(0.1)
@@ -172,6 +173,21 @@ class Section:
 def section(name: str, icon: Optional[str] = None) -> Section:
     config = page(_noop, name, icon, is_section=True)
     return Section(parent_hash=config["page_script_hash"])
+
+
+class Section:
+    def page(
+        self,
+        path: Union[str, Callable],
+        name: Optional[str] = None,
+        icon: Optional[str] = None,
+    ):
+        page(path, name, icon, is_nested=True)
+
+
+def section(name: str, icon: Optional[str] = None) -> Section:
+    page("streamlit_app.py", name, icon, is_section=True)
+    return Section()
 
 
 def _run_script(self, rerun_data: RerunData) -> None:
