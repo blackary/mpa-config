@@ -37,6 +37,6 @@ st.page("example_four.py", icon="🦊")
 
 st.page("example_three.py", name="Custom name!", icon="🔥")
 
-st.page("example_two.py", icon="⭐")
+st.page("example_two.py", icon="random")
 
-st.page(function_example, icon="🌊")
+st.page(function_example, icon=":dog:")

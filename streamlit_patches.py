@@ -3,8 +3,10 @@ from pathlib import Path
 from time import sleep
 from typing import Callable, Optional, Union
 
+import requests
 from streamlit import *
 from streamlit import __version__, _get_script_run_ctx, source_util
+from streamlit.commands.page_config import get_random_emoji
 from streamlit.scriptrunner.script_runner import (
     LOGGER,
     SCRIPT_RUN_WITHOUT_ERRORS_KEY,
@@ -25,6 +27,29 @@ from streamlit.scriptrunner.script_runner import (
 from streamlit.source_util import _on_pages_changed, get_pages
 from streamlit.util import calc_md5
 
+set_page_config
+
+
+@experimental_singleton
+def get_icons() -> Dict[str, str]:
+    url = "https://raw.githubusercontent.com/omnidan/node-emoji/master/lib/emoji.json"
+    return requests.get(url).json()
+
+
+def translate_icon(icon: str) -> str:
+    """
+    If you pass a name of an icon, like :dog:, translate it into the
+    corresponding unicode character
+    """
+    icons = get_icons()
+    if icon == "random":
+        icon = get_random_emoji()
+    elif icon[0] == icon[-1] == ":":
+        icon = icon[1:-1]
+        if icon in icons:
+            return icons[icon]
+    return icon
+
 
 def page(
     path: Union[str, Callable], name: Optional[str] = None, icon: Optional[str] = None
@@ -34,7 +59,9 @@ def page(
     path: The path to the page's script or a function that returns the page's script
     name (optional): The name of the page (defaults to the page's script's or function
     name, with underscores replaced with spaces)
-    icon (optional): The icon to be used for the page
+    icon (optional): The icon to be used for the page. Can either be the actual icon
+        (e.g. 🔥) or with colons around the name (e.g. :fire:), or "random" for a random
+        emoji
     """
 
     # TODO -- FIX THIS
@@ -77,7 +104,7 @@ def page(
         "page_name": name,
     }
     if icon is not None:
-        config["icon"] = icon
+        config["icon"] = translate_icon(icon)
     else:
         config["icon"] = ""
 
