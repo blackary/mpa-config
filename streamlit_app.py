@@ -37,9 +37,45 @@ st.page("example_four.py", icon="🦊")
 
 section = st.section("Section", icon="🧯")
 
-# st.page("example_three.py", name="Custom name!", icon="🔥")
+st.page("example_three.py", name="Custom name!", icon="🔥")
+
 section.page("example_three.py", name="Custom name!", icon="🔥")
 
 section.page("example_two.py", icon="⭐")
 
 section.page(function_example, icon="🌊")
+
+
+def test():
+    st.write("This is a test")
+
+
+st.page(test, name="Unindented?", icon="🔥")
+
+
+def test2():
+    st.write("This is a test")
+
+
+section.page(test2, icon="🌊")
+
+
+def test3():
+    st.write("This is a test")
+
+
+def test4():
+    st.write("This is a test")
+
+
+def test5():
+    st.write("This is a test")
+
+
+section = st.section("Section2", icon="🧯")
+
+section.page(test3, "Test3", icon="🔥")
+
+section.page(test4, "Test4", icon="🔥")
+
+st.page(test5, "Test5", icon="🔥")

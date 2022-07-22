@@ -37,8 +37,9 @@ def page(
     icon: Optional[str] = None,
     is_nested: bool = False,
     is_section: bool = False,
-    force_update: bool = True, # TODO -- UNDO!
-):
+    parent_hash: str = None,
+    force_update: bool = False,
+) -> Dict[str, Any]:
     """
     Add a new page to the sidebar
     path: The path to the page's script or a function that returns the page's script
@@ -62,22 +63,27 @@ def page(
     if main_page_hash_absolute in page_config:
         page_config.pop(main_page_hash_absolute)
 
+
     if callable(path):
-        page_script_hash = calc_md5(path.__name__)
-    elif is_section:
-        page_script_hash = calc_md5(path + str(name))
+        to_hash = path.__name__
     else:
-        page_script_hash = calc_md5(path)
+        to_hash = str(path)
+
+    if is_section:
+        to_hash += str(name)
+
+    page_script_hash = calc_md5(to_hash)
 
     # If this page has already been added, don't try to add it again.
     if page_script_hash in page_config and not force_update:
-        return
+        return page_config[page_script_hash]
     else:
         _add_css_to_html()
 
     ctx = _get_script_run_ctx()
+
     if ctx is None:
-        return
+        raise ValueError()
 
     if name is None:
         if callable(path):
@@ -103,7 +109,39 @@ def page(
 
     config["is_section"] = is_section
 
-    page_config[page_script_hash] = config
+    config["parent_hash"] = parent_hash
+
+    hashes_after_parent = []
+    if parent_hash is not None:
+        # If this belongs in a section, add it to the dictionary at the end of the
+        # section pages, not simply at the end of the dict
+        after_parent = False
+        for hash in page_config.keys():
+            if after_parent:
+                hashes_after_parent.append(hash)
+
+            if hash == parent_hash:
+                after_parent = True
+
+        to_replace = []
+        for hash in hashes_after_parent:
+            to_replace.append(page_config.pop(hash))
+
+        # Put all the other pages belonging to the parent section first
+        for _config in to_replace:
+            if _config["parent_hash"] == parent_hash:
+                page_config[_config["page_script_hash"]] = _config
+
+        # Then put the current page
+        page_config[page_script_hash] = config
+
+        # Then put all the pages that don't belong to the parent section
+        for _config in to_replace:
+            if _config["parent_hash"] != parent_hash:
+                page_config[_config["page_script_hash"]] = _config
+
+    else:
+        page_config[page_script_hash] = config
 
     update_css()
 
@@ -111,20 +149,29 @@ def page(
 
     sleep(0.1)
 
+    return config
+
+
+def _noop():
+    pass
+
 
 class Section:
+    def __init__(self, parent_hash: str) -> None:
+        self.parent_hash = parent_hash
+
     def page(
         self,
         path: Union[str, Callable],
         name: Optional[str] = None,
         icon: Optional[str] = None,
     ):
-        page(path, name, icon, is_nested=True)
+        page(path, name, icon, is_nested=True, parent_hash=self.parent_hash)
 
 
 def section(name: str, icon: Optional[str] = None) -> Section:
-    page("streamlit_app.py", name, icon, is_section=True)
-    return Section()
+    config = page(_noop, name, icon, is_section=True)
+    return Section(parent_hash=config["page_script_hash"])
 
 
 def _run_script(self, rerun_data: RerunData) -> None:
@@ -347,6 +394,7 @@ def _add_css_to_html():
 
 
 def update_css():
+    write("UPDATING CSS!!!")
     base_path = Path(__path__[0])
     new_css = base_path / "static" / "static" / "css" / "css-patches.css"
 
