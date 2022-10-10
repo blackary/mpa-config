@@ -1,14 +1,17 @@
-# Streamlit Multi-Page Apps v2
+# Streamlit Multi-Page Apps v3
 
-[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://mpa-v2.streamlitapp.com/)
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://blackary-mpa-config-streamlit-app-mpa-title-icon-i42dg6.streamlitapp.com/)
+
+[Notion Doc](https://www.notion.so/streamlit/Draft-spec-to-fix-filename-issues-1c8ceb4d91b64280a28cb20531a121b0) (This is proposed solution #1)
 
 ### Summary
 
-Streamlit recently [released multi-page apps](https://blog.streamlit.io/introducing-multipage-apps/) 🎉 where page filenames are the source of truth for page settings.
+Another iteration of how MPA could work
 
-In this repository, we show a prototype on how a new widget, `st.page`, could be used to populate the sidebar. This is very different from the current MPA, because
-the main app script (in this case, streamlit_app.py) always runs, and then the page-specific code. This allows you to have easy control over which pages are loaded, and in what order, as well as have common functionality (e.g. a common sidebar) to be defined just once, and not repeated in each page.
+`st.title` now _both_ inserts a page title and adds a custom title to the sidebar
+`st.icon` is a new command which inserts a large icon and adds a custom icon to the sidebar
 
-In effect, the code that runs is always streamlit_app.py + one of the other app scripts (or functions).
+If you change either of these while on a page, auto-reload should also change the sidebar
 
-More details available at this [page](https://www.notion.so/streamlit/Johannes-MPA-v2-idea-1869aafe213b45fabb090db9cae845c1)
+On the initial page load, we simply use regex to find the first instances of st.title and st.icon, and use those if
+they exist to pre-populate the icon and title in sidebar.
