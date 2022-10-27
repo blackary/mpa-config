@@ -1,35 +1,15 @@
-from itertools import chain
-from pathlib import Path
-
 import streamlit as st
 
-from page_config import standard_page_widgets
+from page_show import clear_all_but_first_page, show_pages
 
-standard_page_widgets()
+default_pages = st.session_state.get("pages_to_show", None)
 
-st.balloons()
+n_pages = len(default_pages) if default_pages is not None else 5
 
+num_pages = st.slider("Number of pages", 1, 5, n_pages)
 
-"""
-# Customizing Multi-Page Apps
+clear_all_but_first_page()
 
-This is an example repo that shows how you can customize the display of a multi-page
-app through accessing a private method which sets up the sidebar.
+pages = ["streamlit_app", "example_one", "example_two", "example_three", "example_four"]
 
-Note that this does NOT require you to rename the individual python scripts, and that
-the naming, ordering, and icons are all controlled by the page_config.yaml file.
-"""
-
-col1, col2 = st.columns(2)
-
-
-with col1:
-    "## `page_config.yaml`"
-    config = Path("page_config.yaml").read_text()
-    st.code(config)
-
-
-with col2:
-    "## Streamlit app files in repository"
-    paths = chain(Path(".").glob("streamlit_app.py"), Path("pages").glob("*.py"))
-    st.code("\n".join(str(p) for p in paths))
+show_pages(pages[:num_pages])
