@@ -14,3 +14,4 @@ __pycache__
 .mypy_cache
 
 .streamlit/secrets.toml
+.streamlit/pages.json
