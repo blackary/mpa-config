@@ -10,7 +10,7 @@ server = Server.get_current()
 
 DEFAULT_PAGE = server._main_script_path
 
-PAGES_PATH = ".pages.json"
+PAGES_PATH = Path(".pages.json")
 
 if "pages_to_show" not in st.session_state:
     pages = get_pages(DEFAULT_PAGE)
