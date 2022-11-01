@@ -1,15 +1,28 @@
 import streamlit as st
 
-from page_show import clear_all_but_first_page, show_pages
+from page_show import show_pages
 
-default_pages = st.session_state.get("pages_to_show", None)
+"""# Dynamically Show and Hide Pages in MPA"""
 
-n_pages = len(default_pages) if default_pages is not None else 5
+with st.echo("above"):
+    st.checkbox("Simulate logged-in user", key="logged_in")
 
-num_pages = st.slider("Number of pages", 1, 5, n_pages)
+    if st.session_state["logged_in"]:
+        show_pages(
+            [
+                "streamlit_app",
+                "example_one",
+                "example_two",
+                "example_three",
+                "example_four",
+            ]
+        )
+    else:
+        show_pages(["streamlit_app"])
 
-clear_all_but_first_page()
-
-pages = ["streamlit_app", "example_one", "example_two", "example_three", "example_four"]
-
-show_pages(pages[:num_pages])
+"""
+Note that this checkbox doesn't just hide the sidebar, it actually removes the
+pages from the page list. To see this, uncheck the checkbox and then
+click on this link to try to visit [/example_one](/example_one). You'll get a
+`Page Not Found` error
+"""

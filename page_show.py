@@ -3,9 +3,13 @@ from pathlib import Path
 from typing import Iterable
 
 import streamlit as st
+from streamlit.server.server import Server
 from streamlit.source_util import _on_pages_changed, get_pages
 
-DEFAULT_PAGE = "streamlit_app.py"
+server = Server.get_current()
+
+DEFAULT_PAGE = server._main_script_path
+
 
 if "pages_to_show" not in st.session_state:
     pages = get_pages(DEFAULT_PAGE)
@@ -35,11 +39,9 @@ def _update_pages():
 
     current_pages.clear()
 
-    for name in st.session_state.pages_to_show:
-        for key, val in saved_pages.items():
-            if val["page_name"] == name:
-                if key not in current_pages:
-                    current_pages[key] = val
+    for key, val in saved_pages.items():
+        if val["page_name"] in st.session_state.pages_to_show:
+            current_pages[key] = val
 
     _on_pages_changed.send()
 
