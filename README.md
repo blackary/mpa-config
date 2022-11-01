@@ -19,3 +19,5 @@ The functions that come with the `page_show` module are:
 - `show_all_pages()`
 - `show_page(<page_name>)` -- adds one page to list of visible pages
 - `hide_page(<page_name>)` -- hides one page from the list of visible pages
+
+See code here: https://github.com/blackary/mpa-config/tree/dynamic-hide
