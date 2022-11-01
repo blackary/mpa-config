@@ -36,4 +36,6 @@ Note that these log out / log in buttons don't just hide the sidebar, it actuall
 removes the pages from the page list. To see this, log out and then
 click on this link to try to visit [/example_one](/example_one). You'll get a
 `Page Not Found` error
+
+See code here: https://github.com/blackary/mpa-config/tree/dynamic-hide
 """
