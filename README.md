@@ -1,14 +1,12 @@
-# Streamlit Multi-Page Configuration
+# Streamlit Multi-Page Configuration: Dynamic Show/Hide
 
-[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://mpa-config.streamlitapp.com/)
-
-<img width="600" src="https://user-images.githubusercontent.com/7164864/178483961-1f9abf49-eb44-455f-9362-37951daf055a.gif">
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://dynamic-pages.streamlitapp.com/)
 
 ### Summary
 
 Streamlit recently [released multi-page apps](https://blog.streamlit.io/introducing-multipage-apps/) 🎉 where page filenames are the source of truth for page settings.
 
-In this repository, we show a prototype of a page_show module which controls which pages are visible.
+In this repository, we show a prototype of a `page_show` module which controls which pages are visible.
 
 This module contains the following functions:
 
