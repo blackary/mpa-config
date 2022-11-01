@@ -10,6 +10,7 @@ server = Server.get_current()
 
 DEFAULT_PAGE = server._main_script_path
 
+PAGES_PATH = ".pages.json"
 
 if "pages_to_show" not in st.session_state:
     pages = get_pages(DEFAULT_PAGE)
@@ -19,15 +20,11 @@ if "pages_to_show" not in st.session_state:
 def _get_all_pages():
     default_pages = get_pages(DEFAULT_PAGE)
 
-    pages_path = Path(".streamlit/pages.json")
-
-    pages_path.parent.mkdir(exist_ok=True)
-
-    if pages_path.exists():
-        saved_default_pages = json.loads(pages_path.read_text())
+    if PAGES_PATH.exists():
+        saved_default_pages = json.loads(PAGES_PATH.read_text())
     else:
         saved_default_pages = default_pages.copy()
-        pages_path.write_text(json.dumps(default_pages, indent=4))
+        PAGES_PATH.write_text(json.dumps(default_pages, indent=4))
 
     return saved_default_pages
 
