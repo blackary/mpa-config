@@ -14,7 +14,7 @@ This module contains the following functions:
 
 In this repository, we show a prototype on how to use a [page_config.yaml](https://github.com/blackary/mpa-config/blob/main/page_config.yaml) to control the ordering, icons, and nesting of the pages in the sidebar of a multi-page Streamlit app.
 
-Main features include:
+The functions that come with the `page_show` module are:
 
 - `show_pages(<list_of_pages>)`
 - `clear_all_but_first_page()`
